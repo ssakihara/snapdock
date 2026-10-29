@@ -7,6 +7,16 @@
 
 初回起動時にログイン項目へ自動登録され、Mac にログインすると自動で起動します。不要ならメニューの「ログイン時に起動」をオフにしてください。
 
+## インストール
+
+Homebrew でインストールできます。
+
+```sh
+brew install --cask ssakihara/tap/snapdock
+```
+
+更新は `brew upgrade --cask snapdock` です。[Releases](https://github.com/ssakihara/snapdock/releases) から DMG をダウンロードして、SnapDock.app を「アプリケーション」フォルダへドラッグしても入れられます。
+
 ## 動作環境
 
 - macOS 13 Ventura 以降
@@ -32,6 +42,12 @@ TEAM_ID=<Team ID> NOTARY_PROFILE=snapdock-notary scripts/build-dmg.sh
 `build/release/SnapDock-<バージョン>.dmg` ができます。
 
 できた DMG は `gh release create v<バージョン> build/release/SnapDock-<バージョン>.dmg --generate-notes` で GitHub Releases に公開します。
+
+公開したら Homebrew tap（[ssakihara/homebrew-tap](https://github.com/ssakihara/homebrew-tap)）の Cask を新しいバージョンと sha256 に更新します。
+
+```sh
+scripts/update-cask.sh <バージョン>
+```
 
 ## アイコン
 
