@@ -2,16 +2,29 @@ import SwiftUI
 
 struct MenuContentView: View {
     @EnvironmentObject private var folder: ScreenshotFolder
+    @EnvironmentObject private var store: ScreenshotStore
+
+    private let columns = [GridItem(.fixed(136), spacing: 8), GridItem(.fixed(136), spacing: 8)]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("SnapDock")
                 .font(.headline)
 
-            // ステップ2でここに最新5件のサムネイルを並べる
-            Text("スクリーンショットはまだありません")
-                .foregroundStyle(.secondary)
-                .frame(maxWidth: .infinity, minHeight: 80)
+            if store.items.isEmpty {
+                Text("スクリーンショットはまだありません")
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, minHeight: 80)
+            } else {
+                LazyVGrid(columns: columns, alignment: .leading, spacing: 8) {
+                    ForEach(store.items) { item in
+                        ScreenshotThumbnail(item: item)
+                    }
+                }
+                Text("ドラッグして貼り付け・右クリックでコピー")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
 
             Divider()
 
@@ -40,6 +53,9 @@ struct MenuContentView: View {
         }
         .padding(16)
         .frame(width: 320)
-        .onAppear { folder.refresh() }
+        .onAppear {
+            folder.refresh()
+            store.reload()
+        }
     }
 }
