@@ -11,12 +11,4 @@
 
 ## ビルド
 
-プロジェクトファイルは [XcodeGen](https://github.com/yonaskolb/XcodeGen) で生成します。
-
-```sh
-brew install xcodegen
-xcodegen generate
-open SnapDock.xcodeproj
-```
-
-Xcode で Signing & Capabilities の Team を選んでから実行してください。
+Xcode 16 以降で `SnapDock.xcodeproj` を開き、Signing & Capabilities の Team を選んでから実行してください。
