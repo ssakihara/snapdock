@@ -4,6 +4,7 @@ import SwiftUI
 struct SnapDockApp: App {
     @StateObject private var folder: ScreenshotFolder
     @StateObject private var store: ScreenshotStore
+    @StateObject private var launchAtLogin = LaunchAtLogin()
 
     init() {
         let folder = ScreenshotFolder()
@@ -16,6 +17,7 @@ struct SnapDockApp: App {
             MenuContentView()
                 .environmentObject(folder)
                 .environmentObject(store)
+                .environmentObject(launchAtLogin)
         }
         .menuBarExtraStyle(.window)
     }
