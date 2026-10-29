@@ -32,3 +32,7 @@ TEAM_ID=<Team ID> NOTARY_PROFILE=snapdock-notary scripts/build-dmg.sh
 `build/release/SnapDock-<バージョン>.dmg` ができます。
 
 できた DMG は `gh release create v<バージョン> build/release/SnapDock-<バージョン>.dmg --generate-notes` で GitHub Releases に公開します。
+
+## アイコン
+
+アプリアイコンとメニューバーアイコンの元データは `design/` にある SVG です。`SnapDock/Assets.xcassets` の PNG はここから書き出しています。

@@ -1,0 +1,19 @@
+<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="1024" height="1024">
+<defs>
+<linearGradient id="bg31" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#363B46"/><stop offset="1" stop-color="#14161B"/></linearGradient>
+<clipPath id="sq31"><rect x="100" y="100" width="824" height="824" rx="185"/></clipPath>
+<filter id="os31" x="-10%" y="-10%" width="120%" height="125%"><feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000" flood-opacity=".28"/></filter>
+<filter id="sh31" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#000" flood-opacity=".22"/></filter>
+<linearGradient id="sky31" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFC48F"/><stop offset="1" stop-color="#FFE9D6"/></linearGradient>
+<clipPath id="im31"><rect x="350" y="380" width="324" height="240" rx="16"/></clipPath>
+</defs>
+<g filter="url(#os31)"><rect x="100" y="100" width="824" height="824" rx="185" fill="url(#bg31)"/></g>
+<g clip-path="url(#sq31)">
+<path d="M230 345V230H345 M679 230H794V345 M794 679V794H679 M345 794H230V679" fill="none" stroke="#fff" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+<g transform="rotate(-8 512 500)" filter="url(#sh31)">
+<rect x="330" y="360" width="364" height="280" rx="28" fill="#FF8A3D"/>
+<g clip-path="url(#im31)"><rect x="350" y="380" width="324" height="240" fill="url(#sky31)"/>
+<circle cx="610" cy="440" r="26" fill="#fff" opacity=".85"/>
+<path d="M350 620 L450 500 L510 560 L580 470 L674 620 Z" fill="#E0662A"/></g>
+</g>
+<g transform="translate(628 560)"><path d="M0 0 L0 170 L42 130 L72 196 L104 182 L74 118 L130 118 Z" fill="#fff" stroke="#14161B" stroke-width="12" stroke-linejoin="round"/></g></g></svg>

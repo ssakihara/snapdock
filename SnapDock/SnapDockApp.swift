@@ -13,7 +13,7 @@ struct SnapDockApp: App {
     }
 
     var body: some Scene {
-        MenuBarExtra("SnapDock", systemImage: "photo.on.rectangle.angled") {
+        MenuBarExtra("SnapDock", image: "MenuBarIcon") {
             MenuContentView()
                 .environmentObject(folder)
                 .environmentObject(store)
