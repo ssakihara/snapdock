@@ -3,6 +3,7 @@ import SwiftUI
 struct MenuContentView: View {
     @EnvironmentObject private var folder: ScreenshotFolder
     @EnvironmentObject private var store: ScreenshotStore
+    @EnvironmentObject private var launchAtLogin: LaunchAtLogin
 
     private let columns = [GridItem(.fixed(136), spacing: 8), GridItem(.fixed(136), spacing: 8)]
 
@@ -45,6 +46,23 @@ struct MenuContentView: View {
                     .foregroundStyle(.red)
             }
 
+            Toggle("ログイン時に起動", isOn: Binding(
+                get: { launchAtLogin.isEnabled || launchAtLogin.requiresApproval },
+                set: { launchAtLogin.setEnabled($0) }
+            ))
+            .toggleStyle(.checkbox)
+
+            if launchAtLogin.requiresApproval {
+                Button("システム設定でログイン項目を許可") { launchAtLogin.openSystemSettings() }
+                    .font(.caption)
+            }
+
+            if let error = launchAtLogin.lastError {
+                Text(error)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+            }
+
             HStack {
                 Button("フォルダを開く") { folder.openInFinder() }
                 Spacer()
@@ -56,6 +74,7 @@ struct MenuContentView: View {
         .onAppear {
             folder.refresh()
             store.reload()
+            launchAtLogin.refresh()
         }
     }
 }
