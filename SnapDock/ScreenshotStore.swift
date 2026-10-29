@@ -9,7 +9,7 @@ final class ScreenshotStore: ObservableObject {
         var id: URL { url }
     }
 
-    static let imageExtensions: Set<String> = ["png", "jpg", "jpeg", "heic", "tiff", "gif", "pdf"]
+    static let imageExtensions: Set<String> = ["png", "jpg", "jpeg", "heic", "heif", "webp", "avif", "gif", "bmp", "tiff", "tif", "pdf"]
 
     @Published private(set) var items: [Item] = []
 
