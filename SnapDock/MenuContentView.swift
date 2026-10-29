@@ -4,6 +4,7 @@ struct MenuContentView: View {
     @EnvironmentObject private var folder: ScreenshotFolder
     @EnvironmentObject private var store: ScreenshotStore
     @EnvironmentObject private var launchAtLogin: LaunchAtLogin
+    @EnvironmentObject private var hotKey: DoubleOptionHotKey
 
     private let columns = [GridItem(.fixed(136), spacing: 8), GridItem(.fixed(136), spacing: 8)]
 
@@ -63,6 +64,20 @@ struct MenuContentView: View {
                     .foregroundStyle(.red)
             }
 
+            Toggle("⌥ を 2 回押して最新のスクショをコピー", isOn: Binding(
+                get: { hotKey.isEnabled },
+                set: { hotKey.setEnabled($0) }
+            ))
+            .toggleStyle(.checkbox)
+
+            if hotKey.isEnabled && !hotKey.isTrusted {
+                Text("使うにはアクセシビリティの許可が必要です")
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+                Button("システム設定でアクセシビリティを許可") { hotKey.requestAccess() }
+                    .font(.caption)
+            }
+
             HStack {
                 Button("フォルダを開く") { folder.openInFinder() }
                 Spacer()
@@ -75,6 +90,7 @@ struct MenuContentView: View {
             folder.refresh()
             store.reload()
             launchAtLogin.refresh()
+            hotKey.refresh()
         }
     }
 }

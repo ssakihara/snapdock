@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 
 /// 監視フォルダ内の画像を新しい順に最大 `limit` 件保持する。
@@ -7,6 +8,16 @@ final class ScreenshotStore: ObservableObject {
         let url: URL
         let createdAt: Date
         var id: URL { url }
+
+        /// ファイルと画像の両方をクリップボードに載せる（貼り付け先が受け取れる方を使う）。
+        func copyToPasteboard() {
+            let pasteboard = NSPasteboard.general
+            pasteboard.clearContents()
+            pasteboard.writeObjects([url as NSURL])
+            if let image = NSImage(contentsOf: url) {
+                pasteboard.writeObjects([image])
+            }
+        }
     }
 
     static let imageExtensions: Set<String> = ["png", "jpg", "jpeg", "heic", "heif", "webp", "avif", "gif", "bmp", "tiff", "tif", "pdf"]
@@ -48,6 +59,15 @@ final class ScreenshotStore: ObservableObject {
         if Array(newItems) != items {
             items = Array(newItems)
         }
+    }
+
+    /// 最新のスクショをクリップボードにコピーする。コピーできたら true。
+    @discardableResult
+    func copyLatest() -> Bool {
+        reload()
+        guard let latest = items.first else { return false }
+        latest.copyToPasteboard()
+        return true
     }
 
     /// フォルダの書き込み（追加・削除・リネーム）を監視して一覧を更新する。

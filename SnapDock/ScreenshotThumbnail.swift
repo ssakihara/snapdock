@@ -37,7 +37,7 @@ struct ScreenshotThumbnail: View {
             NSItemProvider(contentsOf: item.url) ?? NSItemProvider()
         }
         .contextMenu {
-            Button("コピー") { copyToPasteboard() }
+            Button("コピー") { item.copyToPasteboard() }
             Button("Finder で表示") {
                 NSWorkspace.shared.activateFileViewerSelecting([item.url])
             }
@@ -52,15 +52,6 @@ struct ScreenshotThumbnail: View {
             image = representation.nsImage
         } else {
             image = NSImage(contentsOf: item.url)
-        }
-    }
-
-    private func copyToPasteboard() {
-        let pasteboard = NSPasteboard.general
-        pasteboard.clearContents()
-        pasteboard.writeObjects([item.url as NSURL])
-        if let image = NSImage(contentsOf: item.url) {
-            pasteboard.writeObjects([image])
         }
     }
 }
