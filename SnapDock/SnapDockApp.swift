@@ -5,11 +5,20 @@ struct SnapDockApp: App {
     @StateObject private var folder: ScreenshotFolder
     @StateObject private var store: ScreenshotStore
     @StateObject private var launchAtLogin = LaunchAtLogin()
+    @StateObject private var hotKey: DoubleOptionHotKey
 
     init() {
         let folder = ScreenshotFolder()
         _folder = StateObject(wrappedValue: folder)
-        _store = StateObject(wrappedValue: ScreenshotStore(folderURL: folder.url))
+        let store = ScreenshotStore(folderURL: folder.url)
+        _store = StateObject(wrappedValue: store)
+        _hotKey = StateObject(wrappedValue: DoubleOptionHotKey { [weak store] in
+            if store?.copyLatest() == true {
+                NSSound(named: "Pop")?.play()
+            } else {
+                NSSound.beep()
+            }
+        })
     }
 
     var body: some Scene {
@@ -18,6 +27,7 @@ struct SnapDockApp: App {
                 .environmentObject(folder)
                 .environmentObject(store)
                 .environmentObject(launchAtLogin)
+                .environmentObject(hotKey)
         }
         .menuBarExtraStyle(.window)
     }
