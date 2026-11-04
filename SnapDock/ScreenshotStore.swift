@@ -21,22 +21,82 @@ final class ScreenshotStore: ObservableObject {
     }
 
     static let imageExtensions: Set<String> = ["png", "jpg", "jpeg", "heic", "heif", "webp", "avif", "gif", "bmp", "tiff", "tif", "pdf"]
+    /// 自動でゴミ箱へ移す対象（スクショと画面収録）
+    static let expirableExtensions: Set<String> = imageExtensions.union(["mov", "mp4"])
+
+    static let autoTrashEnabledKey = "autoTrashEnabled"
+    /// 作成からこの時間が経ったファイルをゴミ箱へ移す
+    static let expiration: TimeInterval = 3 * 24 * 60 * 60
+    /// 期限切れの確認間隔
+    static let autoTrashInterval: TimeInterval = 60 * 60
 
     @Published private(set) var items: [Item] = []
+    @Published private(set) var isAutoTrashEnabled: Bool
 
     private let folderURL: URL
     private let limit: Int
+    private let defaults: UserDefaults
     private var source: DispatchSourceFileSystemObject?
+    private var autoTrashTimer: Timer?
 
-    init(folderURL: URL, limit: Int = 5) {
+    init(folderURL: URL, limit: Int = 5, defaults: UserDefaults = .standard) {
         self.folderURL = folderURL
         self.limit = limit
+        self.defaults = defaults
+        isAutoTrashEnabled = defaults.object(forKey: Self.autoTrashEnabledKey) as? Bool ?? true
+        if isAutoTrashEnabled {
+            startAutoTrash()
+        }
         reload()
         startWatching()
     }
 
     deinit {
         source?.cancel()
+        autoTrashTimer?.invalidate()
+    }
+
+    func setAutoTrashEnabled(_ enabled: Bool) {
+        isAutoTrashEnabled = enabled
+        defaults.set(enabled, forKey: Self.autoTrashEnabledKey)
+        if enabled {
+            startAutoTrash()
+        } else {
+            autoTrashTimer?.invalidate()
+            autoTrashTimer = nil
+        }
+    }
+
+    /// 作成から `expiration` 以上経ったスクショをゴミ箱へ移す（完全には削除しない）。
+    func trashExpired(now: Date = Date()) {
+        let keys: [URLResourceKey] = [.creationDateKey, .isRegularFileKey]
+        let urls = (try? FileManager.default.contentsOfDirectory(
+            at: folderURL,
+            includingPropertiesForKeys: keys,
+            options: [.skipsHiddenFiles]
+        )) ?? []
+
+        let cutoff = now.addingTimeInterval(-Self.expiration)
+        for url in urls {
+            guard Self.expirableExtensions.contains(url.pathExtension.lowercased()),
+                  let values = try? url.resourceValues(forKeys: Set(keys)),
+                  values.isRegularFile == true,
+                  let createdAt = values.creationDate, // 作成日時が取れないものは触らない
+                  createdAt < cutoff else { continue }
+            try? FileManager.default.trashItem(at: url, resultingItemURL: nil)
+        }
+    }
+
+    /// 起動時（有効化時）に一度、その後は定期的に期限切れを確認する。
+    private func startAutoTrash() {
+        trashExpired()
+        guard autoTrashTimer == nil else { return }
+        let timer = Timer(timeInterval: Self.autoTrashInterval, repeats: true) { [weak self] _ in
+            Task { @MainActor in self?.trashExpired() }
+        }
+        timer.tolerance = 60
+        RunLoop.main.add(timer, forMode: .common)
+        autoTrashTimer = timer
     }
 
     func reload() {

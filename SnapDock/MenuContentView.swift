@@ -64,6 +64,12 @@ struct MenuContentView: View {
                     .foregroundStyle(.red)
             }
 
+            Toggle("3 日経ったスクショをゴミ箱へ移動", isOn: Binding(
+                get: { store.isAutoTrashEnabled },
+                set: { store.setAutoTrashEnabled($0) }
+            ))
+            .toggleStyle(.checkbox)
+
             Toggle("⌥ を 2 回押して最新のスクショをコピー", isOn: Binding(
                 get: { hotKey.isEnabled },
                 set: { hotKey.setEnabled($0) }
@@ -88,6 +94,9 @@ struct MenuContentView: View {
         .frame(width: 320)
         .onAppear {
             folder.refresh()
+            if store.isAutoTrashEnabled {
+                store.trashExpired()
+            }
             store.reload()
             launchAtLogin.refresh()
             hotKey.refresh()
